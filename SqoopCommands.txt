@@ -1,0 +1,71 @@
+SQOOP COMMANDS:
+
+//command to import data from mysql database to hdfs cluster using sqoop command...
+
+sqoop import \
+--connect jdbc;mysql://quickstart.cloudera:3306/retail_db \
+--username retail_dba \
+--password cloudera \
+--table orders \
+--warehouse-dir /user/projects
+
+sqoop import \
+--connect jdbc:mysql"//quickstart.cloudera:3306/retail_db \
+--username retail_dba \
+--password cludera \
+--table customers  \
+--warehouse-dir /user/projects
+
+//we can create hive table from two methods: 
+//1.)manually type table formats and built schema
+//2.)use sqoop command to copy format 
+//we are using 2nd method and commands are below
+
+sqoop create-hive-table \
+--connect jdbc://mysql://quickstart.cloudera:3306/retail_db \
+--username retail_dba \
+--password cloudera \
+--table orders \
+--hive table customers \
+--fields-terminated-by ','
+
+sqoop create-hive-table \
+--connect jdbc://mysql://quickstart.cloudera:3306/retail_db \
+--username retail_dba \
+--password cloudera \
+--table orders \
+--hive table customers \
+--fields-terminated-by ','
+
+//load data in schema of hive table structure by using this
+
+
+
+load data inpath 'user/project/orders' into table orders;
+
+load data inpath 'user/project/customers' into table customers;
+
+//create databse in hbase because it is much faster then hive to process heavy queries:
+
+
+create database 360view;
+
+use 360view;
+
+create table 360_hbase(customer_id int,customer_fname string,customer_lname string,order_id int order_date string) STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler' with SERDERPROPERTIES ('hbase.colums.mapping'=':key,personal:customer_fname,personal:customer_lname,personal:order_id,personal:order_date');
+
+
+
+insert overwrite table 360_hbase SELECT c.customer_id,c.customer_fname,c.customer_lname,o.order_id,o.order_date FROM customers c JOIN orders ON (c.customer_id=o.order_customer_id);
+
+
+hbase shell
+
+//hive and hbase  command to check table and speed of both:
+
+ 
+scan "360_hbase" 
+
+get '360_hbase',9992
+
+select * from 360view.360_hbase where customer_id=9992;

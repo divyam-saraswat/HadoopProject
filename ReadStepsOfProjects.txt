@@ -1,0 +1,17 @@
+CUSTOMER 360 viewer (Enhance your speech before approaching customers.)
+
+USING Hadoop,Hive,H-base & Sqoop :-
+
+
+
+step 1: first we ingest all the tables from oracle database to hdfs using scoop command.
+
+step2 : once the data is in hdfs we create hive external tables on the top of those datasets.
+
+step3: create a hive-hbase table.
+
+step4: Do the  complicated processing on 2 tables in hive and finally insert result in the special table created in step3.
+
+step5: we scheduled teh recurring sqoop imports using schedular
+
+ozzie/airflow 
